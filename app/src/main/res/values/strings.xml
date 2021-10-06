@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">MyHolidays</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="impossible_error">Impossible error</string>
+    <string name="impossible_error_text">The impossible error ocurred. The error that logically can never happen just happened.</string>
+    <string name="description">Herfstvakantie</string>
+    <string name="dash">-</string>
+    <string name="startdate">01/10/2021</string>
+    <string name="timeunit">dagen</string>
+    <string name="todo">TODO</string>
+    <string name="units">2</string>
+    <string name="text">Vakantie begint over</string>
+    <string name="enddate">07/10/2021</string>
+    <string name="NoErrorMessage">nader te bepalen</string>
+    <string name="UploadingUserData">Uploading user data...</string>
+    <string name="DownloadingUserData">Downloading user data</string>
+    <string name="ProgressContent">Progress</string>
+    <string name="Placeholder">placeholder</string>
+    <string name="ErrorContent">Error</string>
+    <string name="success">Success</string>
+    <string name="CloudSyncFailed">Cloud synchronization failed.</string>
+    <string name="HolidayOver">Deze vakantie is al voorbij :(</string>
+</resources>
