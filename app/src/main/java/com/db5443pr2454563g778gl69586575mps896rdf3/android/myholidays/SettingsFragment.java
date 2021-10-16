@@ -14,11 +14,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays.databinding.FragmentSecondBinding;
 
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements ISharedRef {
 
     private FragmentSecondBinding binding;
     private IActivityEventListener activityEventListener;
@@ -96,23 +95,14 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         try {
-            RadioGroup radioGroup = view.findViewById(R.id.rgRegion);
 
-            int count = radioGroup.getChildCount();
-            for (int i = 0; i < count; i++) {
-                View o = radioGroup.getChildAt(i);
-                if (o instanceof RadioButton) {
-                    RadioButton selectedAnswer = (RadioButton) o;
-                    if (selectedAnswer.getText().equals(rf.getSharedRefRegion(getContext()))) {
-                        selectedAnswer.setChecked(true);
-                    }
-                }
-            }
+            setRadioGroup(view.findViewById(R.id.rgRegion), SHAREDREF_REGION, "text");
+            setRadioGroup(view.findViewById(R.id.rgPeriod), SHAREDREF_PERIOD, "tag");
 
             String[] parts = rf.getSharedRefSchoolYear(getContext()).split("-");
-            TextView txtStart = (TextView) view.findViewById(R.id.editTextNumber3);
+            TextView txtStart = (TextView) view.findViewById(R.id.txtYearStart);
             txtStart.setText(parts[0]);
-            TextView txtEnd = (TextView) view.findViewById(R.id.editTextNumber5);
+            TextView txtEnd = (TextView) view.findViewById(R.id.txtYearEnd);
             txtEnd.setText(parts[1]);
 
         }catch(Exception e){
@@ -125,15 +115,23 @@ public class SettingsFragment extends Fragment {
             public void onClick(View view) {
 
                 try {
-                    RadioGroup rg = getView().findViewById(R.id.rgRegion);
-                    RadioButton radioButton = (RadioButton) getView().findViewById(rg.getCheckedRadioButtonId());
-                    Log.d("DENNIS_B", "radioButton.getText().toString() " + radioButton.getText().toString());
-                    rf.setSharedRefRegion(getContext(), radioButton.getText().toString());
 
-                    TextView txtStart = (TextView) getView().findViewById(R.id.editTextNumber3);
-                    TextView txtEnd = (TextView) getView().findViewById(R.id.editTextNumber5);
+                    RadioButton radioButton;
+                    RadioGroup radioGroup;
+
+                    radioGroup = getView().findViewById(R.id.rgRegion);
+                    radioButton = getView().findViewById(radioGroup.getCheckedRadioButtonId());
+                    rf.setSharedRef(getContext(), SHAREDREF_REGION, radioButton.getText().toString());
+
+                    radioGroup = getView().findViewById(R.id.rgPeriod);
+                    radioButton = getView().findViewById(radioGroup.getCheckedRadioButtonId());
+                    rf.setSharedRef(getContext(), SHAREDREF_PERIOD, radioButton.getTag().toString());
+
+                    TextView txtStart = (TextView) getView().findViewById(R.id.txtYearStart);
+                    TextView txtEnd = (TextView) getView().findViewById(R.id.txtYearEnd);
                     Log.d("DENNIS_B", "txtStart-txtEnd " + txtStart.getText().toString() + "-" + txtEnd.getText().toString());
                     rf.setSharedRefSchoolYear(getContext(),txtStart.getText().toString() + "-" + txtEnd.getText().toString());
+
                     /* reload data on save */
                     if (activityEventListener != null) {
                         Log.d("DENNIS_B", "sending data to activityEventListener");
@@ -141,12 +139,41 @@ public class SettingsFragment extends Fragment {
                     }
 
                     getActivity().onBackPressed();
+
                 } catch (Exception e) {
                     Log.d("DENNIS_B", "error saving preferences " + e.getMessage());
                 }
 
             }
         });
+    }
+
+    private void setRadioGroup(RadioGroup rg, String field, String property){
+
+        int count = rg.getChildCount();
+
+        for (int i = 0; i < count; i++) {
+            View o = rg.getChildAt(i);
+            if (o instanceof RadioButton) {
+                RadioButton selectedAnswer = (RadioButton) o;
+                switch(property){
+                    case "tag":
+                        if (selectedAnswer.getTag().equals(rf.getSharedRef(getContext(), field))) {
+                            Log.d("DENNIS_B", "Tag: default value " + rf.getSharedRef(getContext(), field));
+                            selectedAnswer.setChecked(true);
+                        }
+                        break;
+                    case "text":
+                        if (selectedAnswer.getText().equals(rf.getSharedRef(getContext(), field))) {
+                            Log.d("DENNIS_B", "Text: default value " + rf.getSharedRef(getContext(), field));
+                            selectedAnswer.setChecked(true);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
     }
 
     @Override

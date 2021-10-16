@@ -151,7 +151,7 @@ public class Vacation {
                        return "content";
                     }
                     if (LocalDateTime.now().isAfter(ldtStart) && LocalDateTime.now().isBefore(ldtEnd)){
-                        return "happy";
+                        return "vacation";
                     }
                     if (LocalDateTime.now().isAfter(ldtEnd)){
                         return "sad";

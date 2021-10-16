@@ -2,21 +2,39 @@ package com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.util.Calendar;
 
 public class SharedRef implements ISharedRef{
 
-    public String getSharedRefRegion(Context context){
+    public String getSharedRef(Context context, String field){
+
+        String field_default_value = "";
+
+        switch(field){
+            case SHAREDREF_PERIOD:
+                field_default_value = "2";
+                break;
+            case SHAREDREF_REGION:
+                field_default_value = "Zuid";
+                break;
+            default:
+                field_default_value = "unknown";
+                break;
+        }
+
         SharedPreferences prefs = context.getSharedPreferences(SHAREDREF_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(SHAREDREF_REGION, "Zuid");
+        return prefs.getString(field, field_default_value);
     }
 
-    public void setSharedRefRegion(Context context, String region){
+    public void setSharedRef(Context context, String field, String field_value){
+
         SharedPreferences prefs = context.getSharedPreferences(SHAREDREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor prefsEdit = prefs.edit();
-        prefsEdit.putString(SHAREDREF_REGION, region);
+        prefsEdit.putString(field, field_value);
         prefsEdit.apply(); // apply is background, commit is not
+
     }
 
     public void setSharedRefSchoolYear(Context context, String schoolyear){

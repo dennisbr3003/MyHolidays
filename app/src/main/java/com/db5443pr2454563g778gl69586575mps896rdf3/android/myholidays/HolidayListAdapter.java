@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays.data_object.ContentRoot;
 import com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays.data_object.Vacation;
 
-public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.ViewHolder>  {
+public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.ViewHolder> implements ISharedRef {
     private ContentRoot mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
@@ -36,7 +36,7 @@ public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.
         this.mData = data;
 
         schoolyear = rf.getSharedRefSchoolYear(context);
-        region = rf.getSharedRefRegion(context);
+        region = rf.getSharedRef(context, SHAREDREF_REGION);
 
     }
 
@@ -65,6 +65,7 @@ public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.
             holder.mSmileySad.setVisibility(View.GONE);
             holder.mSmileyContent.setVisibility(View.GONE);
             holder.mSmileyHappy.setVisibility(View.GONE);
+            holder.mSmileyVacation.setVisibility(View.GONE);
             holder.mStartsIn.setVisibility(View.VISIBLE);
             holder.mNumberOfDays.setVisibility(View.VISIBLE);
             holder.mTimeUnit.setVisibility(View.VISIBLE);
@@ -86,6 +87,9 @@ public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.
                     break;
                 case "content":
                     holder.mSmileyContent.setVisibility(View.VISIBLE);
+                    break;
+                case "vacation":
+                    holder.mSmileyVacation.setVisibility(View.VISIBLE);
                     break;
                 default: //unknown
                     break;
@@ -115,6 +119,7 @@ public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.
         ImageView mSmileySad;
         ImageView mSmileyHappy;
         ImageView mSmileyContent;
+        ImageView mSmileyVacation;
         TextView mVacationOver;
 
         ViewHolder(View itemView) {
@@ -126,6 +131,7 @@ public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.
             mSmileySad = itemView.findViewById(R.id.ivHolidaySad);
             mSmileyHappy = itemView.findViewById(R.id.ivHolidayHappy);
             mSmileyContent = itemView.findViewById(R.id.ivHolidayContent);
+            mSmileyVacation = itemView.findViewById(R.id.ivHolidayVacation);
             mStartsIn = itemView.findViewById(R.id.txtStartsIn);
             mTimeUnit = itemView.findViewById(R.id.txtTimeUnit);
             mVacationOver = itemView.findViewById(R.id.txtVacationOver);
