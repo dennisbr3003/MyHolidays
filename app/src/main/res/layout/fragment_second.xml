@@ -74,26 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         app:layout_constraintLeft_toLeftOf="@id/txtSelectPeriod"
-        app:layout_constraintTop_toBottomOf="@id/view1">
-
-        <RadioButton
-            android:id="@+id/rbAll"
-            android:layout_width="match_parent"
-            android:layout_height="34dp"
-            android:tag="1"
-            android:text="Alles"
-            android:textSize="20sp" />
-
-        <RadioButton
-            android:id="@+id/rbSinglePeriod"
-            android:layout_width="match_parent"
-            android:layout_height="37dp"
-            android:tag="2"
-            android:text="Enkel schooljaar"
-            android:textSize="20sp"
-            android:visibility="visible"
-            tools:visibility="visible" />
-    </RadioGroup>
+        app:layout_constraintTop_toBottomOf="@id/view1"/>
 
     <TextView
         android:id="@+id/txtSelectPeriod"
@@ -123,10 +104,11 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="148dp"
-        android:layout_height="147dp"
+        android:layout_width="179dp"
+        android:layout_height="209dp"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/view2"
         app:layout_constraintLeft_toRightOf="@id/rgRegion"
         app:layout_constraintTop_toBottomOf="@+id/view2"
         app:srcCompat="@drawable/regions"

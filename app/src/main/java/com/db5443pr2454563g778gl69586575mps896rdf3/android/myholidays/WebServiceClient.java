@@ -15,6 +15,7 @@ import com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays.data_objec
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,7 +28,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class WebServiceClient implements IWebService{
+public class WebServiceClient implements IWebService,ISharedRef{
 
     private Context context;
     private static final MediaType JSON = MediaType.parse(JSON_UTF8);
@@ -46,9 +47,7 @@ public class WebServiceClient implements IWebService{
     @SuppressLint("StaticFieldLeak")
     public void downloadUserDataPayload(final Context context){
 
-
         this.context = context;
-
 
         final AlertDialog dlg = createProgressDialog(SyncDirection.DOWN);
         dlg.show();
@@ -59,11 +58,11 @@ public class WebServiceClient implements IWebService{
 
                 OkHttpClient client = new OkHttpClient().newBuilder().build();
 
-                Log.d("DENNIS_B", "okhttp3 url: "+ String.format("%s/%s?%s", BASE_URL, rf.getSharedRefSchoolYear(context), PROC_OUTPUT));
+                Log.d("DENNIS_B", "okhttp3 url: " + createUrlFromSettings());
 
                 // okHttp3 does not support a body for GET, using the device_id as a path variable -->
                 Request request = new Request.Builder()
-                        .url(String.format("%s/%s?%s", BASE_URL, rf.getSharedRefSchoolYear(context), PROC_OUTPUT))
+                        .url(createUrlFromSettings())
                         .method("GET", null)
                         .build();
 
@@ -85,10 +84,18 @@ public class WebServiceClient implements IWebService{
                         // call m.b.v.enqueue is zelf asynchrone, onPostExecute is hier dan niet nodig; alles gaat via de callback
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                            JSONObject j_object;
+                            JSONObject j_object = null;
                             try {
                                 // first cast the answer to a json object for easy handling -->
-                                j_object = new JSONObject(response.body().string());
+                                String JsonResponse = response.body().string();
+                                if(JsonResponse.startsWith("[")){
+                                    //this cannot be supported for now
+                                    Log.d("DENNIS_B","Response is an JSON array (not supported for now)");
+                                    dlg.dismiss();
+                                    showSyncErrorDialog("Unsupported response format. Expected JsonObject, received JsonArray");
+                                    return;
+                                }
+                                j_object = new JSONObject(JsonResponse);
 
                                 Log.d("DENNIS_B","Has signature key " + j_object.has(SIGNATURE_KEY));
 
@@ -128,12 +135,14 @@ public class WebServiceClient implements IWebService{
                                 }
                             } catch (final JSONException e) {
                                 dlg.dismiss();
+                                Log.d("DENNIS_B","error casting answer to JSON: " + e.getMessage());
                                 showSyncErrorDialog(e.getMessage());
                             }
                         }
                     });
                 } catch (final Exception e) {
                     dlg.dismiss();
+                    Log.d("DENNIS_B","error, final exception: " + e.getMessage());
                     showSyncErrorDialog(e.getMessage());
                 }
                 return null;
@@ -199,6 +208,18 @@ public class WebServiceClient implements IWebService{
         dlg.setCanceledOnTouchOutside(false);
         return dlg;
 
+    }
+
+    private String createUrlFromSettings(){
+
+        String url;
+
+        if(rf.getSharedRef(context, SHAREDREF_PERIOD).equals("1")){
+            url = String.format("%s?%s", BASE_URL, PROC_OUTPUT);
+        } else {
+            url = String.format("%s/%s/%s?%s", BASE_URL, INTEGRATION, rf.getSharedRefSchoolYear(context), PROC_OUTPUT);
+        }
+        return url;
     }
 
     private class Callresult{

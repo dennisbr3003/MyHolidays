@@ -51,4 +51,11 @@ public class SharedRef implements ISharedRef{
         return prefs.getString(SHAREDREF_YEAR, year_start + "-" + year_end);
     }
 
+    public void remSharedRefSchoolYear(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(SHAREDREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEdit = prefs.edit();
+        prefsEdit.remove(SHAREDREF_YEAR);
+        prefsEdit.apply(); // apply is background, commit is not
+    }
+
 }

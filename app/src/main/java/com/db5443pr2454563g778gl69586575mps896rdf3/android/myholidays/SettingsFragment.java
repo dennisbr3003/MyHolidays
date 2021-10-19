@@ -79,8 +79,6 @@ public class SettingsFragment extends Fragment implements ISharedRef {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true); // to gain access to options menu --> and clear it subsequently
-
-
     }
 
     @Override
@@ -95,16 +93,8 @@ public class SettingsFragment extends Fragment implements ISharedRef {
         super.onViewCreated(view, savedInstanceState);
 
         try {
-
             setRadioGroup(view.findViewById(R.id.rgRegion), SHAREDREF_REGION, "text");
-            setRadioGroup(view.findViewById(R.id.rgPeriod), SHAREDREF_PERIOD, "tag");
-
-            String[] parts = rf.getSharedRefSchoolYear(getContext()).split("-");
-            TextView txtStart = (TextView) view.findViewById(R.id.txtYearStart);
-            txtStart.setText(parts[0]);
-            TextView txtEnd = (TextView) view.findViewById(R.id.txtYearEnd);
-            txtEnd.setText(parts[1]);
-
+            initializePeriodFields(true);
         }catch(Exception e){
             Log.d("DENNIS_B", "error getting preferences " + e.getMessage());
         }
@@ -123,14 +113,10 @@ public class SettingsFragment extends Fragment implements ISharedRef {
                     radioButton = getView().findViewById(radioGroup.getCheckedRadioButtonId());
                     rf.setSharedRef(getContext(), SHAREDREF_REGION, radioButton.getText().toString());
 
-                    radioGroup = getView().findViewById(R.id.rgPeriod);
-                    radioButton = getView().findViewById(radioGroup.getCheckedRadioButtonId());
-                    rf.setSharedRef(getContext(), SHAREDREF_PERIOD, radioButton.getTag().toString());
-
                     TextView txtStart = (TextView) getView().findViewById(R.id.txtYearStart);
                     TextView txtEnd = (TextView) getView().findViewById(R.id.txtYearEnd);
                     Log.d("DENNIS_B", "txtStart-txtEnd " + txtStart.getText().toString() + "-" + txtEnd.getText().toString());
-                    rf.setSharedRefSchoolYear(getContext(),txtStart.getText().toString() + "-" + txtEnd.getText().toString());
+                    rf.setSharedRefSchoolYear(getContext(), txtStart.getText().toString() + "-" + txtEnd.getText().toString());
 
                     /* reload data on save */
                     if (activityEventListener != null) {
@@ -174,6 +160,43 @@ public class SettingsFragment extends Fragment implements ISharedRef {
                 }
             }
         }
+    }
+
+    private void initializePeriodFields(boolean enabled){
+        if(enabled){
+
+            TextView txtStart = (TextView) getView().findViewById(R.id.txtYearStart);
+            TextView txtEnd = (TextView) getView().findViewById(R.id.txtYearEnd);
+
+            txtStart.setEnabled(true);
+            txtEnd.setEnabled(true);
+
+            setSchoolYearScreenValue(txtStart, txtEnd);
+
+        } else {
+
+            TextView txtStart = (TextView) getView().findViewById(R.id.txtYearStart);
+            txtStart.setText("");
+
+            TextView txtEnd = (TextView) getView().findViewById(R.id.txtYearEnd);
+            txtEnd.setText("");
+
+            txtStart.setEnabled(false);
+            txtEnd.setEnabled(false);
+
+        }
+    }
+
+    private void setSchoolYearScreenValue(TextView txtStart, TextView txtEnd){
+
+        try {
+            String[] parts = rf.getSharedRefSchoolYear(getContext()).split("-");
+            txtStart.setText(parts[0]);
+            txtEnd.setText(parts[1]);
+        } catch (Exception e){
+            Log.d("DENNIS_B", "String[] parts exception " + e.getMessage());
+        }
+
     }
 
     @Override
