@@ -1,6 +1,7 @@
 package com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays.data_object.ContentRoot;
 import com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays.data_object.Vacation;
 
-public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.ViewHolder> implements ISharedRef {
+public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.ViewHolder> implements ISharedRef, IVacation {
     private ContentRoot mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
@@ -60,7 +61,19 @@ public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.
             holder.mHolidayTitle.setText(vacation.getType());
             holder.mStartDate.setText(vacation.getStartDate(region));
             holder.mEndDate.setText(vacation.getEndDate(region));
-            holder.mNumberOfDays.setText(vacation.getNumberOfDays(region));
+
+            if(vacation.getNumberOfTimeUnits(region).equals("0")){ // days = default
+                if(vacation.getNumberOfTimeUnits(region, "H").equals("0")){ // hours if n.o. days = 0
+                    holder.mNumberOfDays.setText(vacation.getNumberOfTimeUnits(region, "M")); // minutes if n.o. hours = 0
+                    holder.mTimeUnit.setText(R.string.timeunit_m);
+                } else {
+                    holder.mNumberOfDays.setText(vacation.getNumberOfTimeUnits(region, "H")); // hours
+                    holder.mTimeUnit.setText(R.string.timeunit_h);
+                }
+            }else {
+                holder.mNumberOfDays.setText(vacation.getNumberOfTimeUnits(region)); //days (default)
+                holder.mTimeUnit.setText(R.string.timeunit_d);
+            }
 
             holder.mSmileySad.setVisibility(View.GONE);
             holder.mSmileyContent.setVisibility(View.GONE);
@@ -74,22 +87,30 @@ public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.
             String state = vacation.getState(region);
 
             switch (state) {
-                case "happy":
+                case SMILEY_HAPPY:
                     holder.mSmileyHappy.setVisibility(View.VISIBLE);
                     break;
-                case "sad":
+                case SMILEY_SAD:
                     holder.mSmileySad.setVisibility((View.VISIBLE));
                     /* adjust text */
                     holder.mStartsIn.setVisibility(View.INVISIBLE);
                     holder.mNumberOfDays.setVisibility(View.INVISIBLE);
                     holder.mTimeUnit.setVisibility(View.INVISIBLE);
                     holder.mVacationOver.setVisibility(View.VISIBLE);
+                    holder.mVacationOver.setText(R.string.HolidayOver);
+                    holder.mVacationOver.setTextColor(Color.RED);
                     break;
-                case "content":
+                case SMILEY_CONTENT:
                     holder.mSmileyContent.setVisibility(View.VISIBLE);
                     break;
-                case "vacation":
+                case SMILEY_VACATION:
                     holder.mSmileyVacation.setVisibility(View.VISIBLE);
+                    holder.mStartsIn.setVisibility(View.INVISIBLE);
+                    holder.mNumberOfDays.setVisibility(View.INVISIBLE);
+                    holder.mTimeUnit.setVisibility(View.INVISIBLE);
+                    holder.mVacationOver.setVisibility(View.VISIBLE);
+                    holder.mVacationOver.setText(R.string.HolidayOngoing);
+                    holder.mVacationOver.setTextColor(Color.GREEN);
                     break;
                 default: //unknown
                     break;

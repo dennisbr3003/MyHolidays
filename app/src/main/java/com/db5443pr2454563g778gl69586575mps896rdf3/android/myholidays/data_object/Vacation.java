@@ -5,6 +5,8 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays.IVacation;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.Locale;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class Vacation {
+public class Vacation implements IVacation {
 
     private String type;
     private String compulsorydates;
@@ -63,11 +65,11 @@ public class Vacation {
         List<Region> regions = getRegions();
         String startdate = "";
 
-        String pattern = "dd/MM/yyyy";
+        String pattern = DATE_PATTERN;
         DateFormat df = new SimpleDateFormat(pattern);
 
         for(Region r:regions){
-            if(r.getRegion().toLowerCase().equals(region.toLowerCase())||r.getRegion().equals("heel Nederland")){
+            if(r.getRegion().equalsIgnoreCase(region)||r.getRegion().equals(NETHERLANDS)){
                 startdate = r.getStartdate();
                 Log.d("DENNIS_B", "r.getRegion() " + r.getRegion().toLowerCase());
                 Log.d("DENNIS_B", "startdate " + startdate);
@@ -89,11 +91,11 @@ public class Vacation {
         List<Region> regions = getRegions();
         String enddate = "";
 
-        String pattern = "dd/MM/yyyy";
+        String pattern = DATE_PATTERN;
         DateFormat df = new SimpleDateFormat(pattern);
 
         for(Region r:regions){
-            if(r.getRegion().toLowerCase().equals(region.toLowerCase())||r.getRegion().equals("heel Nederland")){
+            if(r.getRegion().toLowerCase().equals(region.toLowerCase())||r.getRegion().equals(NETHERLANDS)){
                 enddate = r.getEnddate();
                 Log.d("DENNIS_B", "enddate "+ enddate);
                 TemporalAccessor accessor = timeFormatter.parse(enddate);
@@ -115,7 +117,7 @@ public class Vacation {
         List<Region> regions = getRegions();
 
         for(Region r:regions) {
-            if (r.getRegion().toLowerCase().equals(region.toLowerCase()) || r.getRegion().equals("heel Nederland")) {
+            if (r.getRegion().equalsIgnoreCase(region) || r.getRegion().equals("heel Nederland")) {
 
                 Log.d("DENNIS_B", "r.getRegion() " + r.getRegion().toLowerCase());
 
@@ -125,7 +127,7 @@ public class Vacation {
                 Log.d("DENNIS_B", "startdate " + startdate1);
                 Log.d("DENNIS_B", "enddate "+ enddate1);
 
-                String pattern = "yyyy-MM-dd";
+                String pattern = ISO_DATE_PATTERN;
                 DateFormat df = new SimpleDateFormat(pattern);
 
                 try {
@@ -133,34 +135,43 @@ public class Vacation {
                     TemporalAccessor accessor = timeFormatter.parse(startdate1);
                     tempDate = Date.from(Instant.from(accessor));
                     startdate1 = df.format(tempDate);
-                    LocalDateTime ldtStart = LocalDateTime.parse(startdate1 + "T00:00:00.000000000");
+                    LocalDateTime ldtStart = LocalDateTime.parse(startdate1 + ISO_TIME);
 
                     accessor = timeFormatter.parse(enddate1);
                     tempDate = Date.from(Instant.from(accessor));
                     enddate1 = df.format(tempDate);
-                    LocalDateTime ldtEnd = LocalDateTime.parse(enddate1 + "T00:00:00.000000000");
+                    LocalDateTime ldtEnd = LocalDateTime.parse(enddate1 + ISO_TIME);
 
                     Log.d("DENNIS_B", "startdate/enddate " + startdate1 + " " + enddate1);
 
                     // getting the actual state
                     if (LocalDateTime.now().isBefore(ldtStart)) {
-                       if (((Integer.parseInt(String.valueOf(ChronoUnit.DAYS.between(LocalDateTime.now(), ldtStart)))) > 0) &&
+                       if (((Integer.parseInt(String.valueOf(ChronoUnit.DAYS.between(LocalDateTime.now(), ldtStart)))) >= 0) &&
                         ((Integer.parseInt(String.valueOf(ChronoUnit.DAYS.between(LocalDateTime.now(), ldtStart)))) <= 7)){
-                           return "happy"; //starts within a week
+                           Log.d("DENNIS_B", "state = happy");
+                           return SMILEY_HAPPY; //Starts within a week
                         }
-                       return "content";
+                    }
+                    if (LocalDateTime.now().isBefore(ldtStart)) {
+                        if ((Integer.parseInt(String.valueOf(ChronoUnit.DAYS.between(LocalDateTime.now(), ldtStart)))) > 7) {
+                            Log.d("DENNIS_B", "state = content");
+                            return SMILEY_CONTENT; //Does not start within a week
+                        }
                     }
                     if (LocalDateTime.now().isAfter(ldtStart) && LocalDateTime.now().isBefore(ldtEnd)){
-                        return "vacation";
+                        Log.d("DENNIS_B", "state = vacation");
+                        return SMILEY_VACATION;
                     }
                     if (LocalDateTime.now().isAfter(ldtEnd)){
-                        return "sad";
+                        Log.d("DENNIS_B", "state = sad");
+                        return SMILEY_SAD;
                     }
-                    return "unknown";
+                    Log.d("DENNIS_B", "state = unknown");
+                    return SMILEY_UNKNOWN;
                 }
                 catch(Exception e){
                     Log.d("DENNIS_B", "error getting vacation state " + e.getMessage());
-                    return "unknown";
+                    return SMILEY_UNKNOWN;
                 }
             }
         }
@@ -168,31 +179,52 @@ public class Vacation {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public String getNumberOfDays(String region){
+    public String getNumberOfTimeUnits(String region){
+        return getNumberOfTimeUnits(region,"D");
+    }
 
-        Log.d("DENNIS_B", "vacation.getNumberOfDays");
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public String getNumberOfTimeUnits(String region, String TimeUnit){
+        Log.d("DENNIS_B", "vacation.getNumberOfTimeUnits for " + TimeUnit);
 
         String startdate = "";
         List<Region> regions = getRegions();
 
-        String pattern = "yyyy-MM-dd";
+        String pattern = ISO_DATE_PATTERN;
         DateFormat df = new SimpleDateFormat(pattern);
 
         for(Region r:regions) {
-            if (r.getRegion().toLowerCase().equals(region.toLowerCase()) || r.getRegion().equals("heel Nederland")) {
+            if (r.getRegion().equalsIgnoreCase(region) || r.getRegion().equals(NETHERLANDS)) {
                 startdate = r.getStartdate();
                 try {
 
                     TemporalAccessor accessor = timeFormatter.parse(startdate);
                     tempDate = Date.from(Instant.from(accessor));
                     startdate = df.format(tempDate);
-                    LocalDateTime ldtStart = LocalDateTime.parse(startdate + "T00:00:00.000000000");
+                    LocalDateTime ldtStart = LocalDateTime.parse(startdate + ISO_TIME);
 
                     if (LocalDateTime.now().isBefore(ldtStart)) {
-                        if ((Integer.parseInt(String.valueOf(ChronoUnit.DAYS.between(LocalDateTime.now(), ldtStart)))) > 0) {
-                            return String.valueOf(Integer.parseInt(String.valueOf(ChronoUnit.DAYS.between(LocalDateTime.now(), ldtStart))));
-                        } else {
-                            return "0";
+                        switch(TimeUnit){
+                            case"D":
+                                if ((Integer.parseInt(String.valueOf(ChronoUnit.DAYS.between(LocalDateTime.now(), ldtStart)))) > 0) {
+                                    return String.valueOf(Integer.parseInt(String.valueOf(ChronoUnit.DAYS.between(LocalDateTime.now(), ldtStart))));
+                                } else {
+                                    return "0";
+                                }
+                            case "H":
+                                if ((Integer.parseInt(String.valueOf(ChronoUnit.HOURS.between(LocalDateTime.now(), ldtStart)))) > 0) {
+                                    return String.valueOf(Integer.parseInt(String.valueOf(ChronoUnit.HOURS.between(LocalDateTime.now(), ldtStart))));
+                                } else {
+                                    return "0";
+                                }
+                            case "M":
+                                if ((Integer.parseInt(String.valueOf(ChronoUnit.MINUTES.between(LocalDateTime.now(), ldtStart)))) > 0) {
+                                    return String.valueOf(Integer.parseInt(String.valueOf(ChronoUnit.MINUTES.between(LocalDateTime.now(), ldtStart))));
+                                } else {
+                                    return "0";
+                                }
+                            default:
+                                return "0";
                         }
                     } else {
                         return "0";

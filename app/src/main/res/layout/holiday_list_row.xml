@@ -150,6 +150,6 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
         android:layout_toEndOf="@id/txtNrOfDays"
-        android:text="@string/timeunit" />
+        android:text="@string/timeunit_d" />
 
 </RelativeLayout>

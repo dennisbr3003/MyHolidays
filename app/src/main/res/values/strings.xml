@@ -11,10 +11,12 @@
     <string name="description">Herfstvakantie</string>
     <string name="dash">-</string>
     <string name="startdate">01/10/2021</string>
-    <string name="timeunit">dagen</string>
+    <string name="timeunit_d">dagen</string>
+    <string name="timeunit_h">uur</string>
+    <string name="timeunit_m">minuten</string>
     <string name="todo">TODO</string>
     <string name="units">2</string>
-    <string name="text">Vakantie begint over</string>
+    <string name="text">Begint (officieel) over</string>
     <string name="enddate">07/10/2021</string>
     <string name="NoErrorMessage">nader te bepalen</string>
     <string name="UploadingUserData">Uploading user data...</string>
@@ -25,4 +27,5 @@
     <string name="success">Success</string>
     <string name="CloudSyncFailed">Cloud synchronization failed.</string>
     <string name="HolidayOver">Deze vakantie is al voorbij :(</string>
+    <string name="HolidayOngoing">Deze vakantie is al NU bezig!</string>
 </resources>
