@@ -96,7 +96,7 @@ public class SettingsFragment extends Fragment implements ISharedRef {
             setRadioGroup(view.findViewById(R.id.rgRegion), SHAREDREF_REGION, "text");
             initializePeriodFields(true);
         }catch(Exception e){
-            Log.d("DENNIS_B", "error getting preferences " + e.getMessage());
+            Log.d(getString(R.string.tag), getString(R.string.preferences_error) + e.getMessage());
         }
 
 
@@ -115,19 +115,26 @@ public class SettingsFragment extends Fragment implements ISharedRef {
 
                     TextView txtStart = (TextView) getView().findViewById(R.id.txtYearStart);
                     TextView txtEnd = (TextView) getView().findViewById(R.id.txtYearEnd);
-                    Log.d("DENNIS_B", "txtStart-txtEnd " + txtStart.getText().toString() + "-" + txtEnd.getText().toString());
+
+                    Result result = checkSettings(txtStart.getText().toString() + "-" + txtEnd.getText().toString());
+                    if (result != null && !result.isResult()){
+                        Message.Error.displayErrorMessage(getContext(), result);
+                        return;
+                    }
+
+                    Log.d(getString(R.string.tag), getString(R.string.txtstart_end) + txtStart.getText().toString() + "-" + txtEnd.getText().toString());
                     rf.setSharedRefSchoolYear(getContext(), txtStart.getText().toString() + "-" + txtEnd.getText().toString());
 
                     /* reload data on save */
                     if (activityEventListener != null) {
-                        Log.d("DENNIS_B", "sending data to activityEventListener");
+                        Log.d(getString(R.string.tag), getString(R.string.activity_event_listener_data));
                         activityEventListener.downLoadUserData();
                     }
 
                     getActivity().onBackPressed();
 
                 } catch (Exception e) {
-                    Log.d("DENNIS_B", "error saving preferences " + e.getMessage());
+                    Log.d(getString(R.string.tag), getString(R.string.preferences_save_error) + e.getMessage());
                 }
 
             }
@@ -145,13 +152,13 @@ public class SettingsFragment extends Fragment implements ISharedRef {
                 switch(property){
                     case "tag":
                         if (selectedAnswer.getTag().equals(rf.getSharedRef(getContext(), field))) {
-                            Log.d("DENNIS_B", "Tag: default value " + rf.getSharedRef(getContext(), field));
+                            Log.d(getString(R.string.tag), getString(R.string.default_tag) + rf.getSharedRef(getContext(), field));
                             selectedAnswer.setChecked(true);
                         }
                         break;
                     case "text":
                         if (selectedAnswer.getText().equals(rf.getSharedRef(getContext(), field))) {
-                            Log.d("DENNIS_B", "Text: default value " + rf.getSharedRef(getContext(), field));
+                            Log.d(getString(R.string.tag), getString(R.string.default_text) + rf.getSharedRef(getContext(), field));
                             selectedAnswer.setChecked(true);
                         }
                         break;
@@ -194,7 +201,7 @@ public class SettingsFragment extends Fragment implements ISharedRef {
             txtStart.setText(parts[0]);
             txtEnd.setText(parts[1]);
         } catch (Exception e){
-            Log.d("DENNIS_B", "String[] parts exception " + e.getMessage());
+            Log.d(getString(R.string.tag), getString(R.string.parts_exception) + e.getMessage());
         }
 
     }
@@ -203,6 +210,24 @@ public class SettingsFragment extends Fragment implements ISharedRef {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    public Result checkSettings(String period){
+
+        String[] parts = period.split("-");
+
+        try {
+            if (Math.abs(Integer.parseInt(parts[0]) - Integer.parseInt(parts[1])) != 1){
+                return new Result(false, getString(R.string.invalid_period_interval), getString(R.string.Error_in_settings));
+            }
+
+            if (Integer.parseInt(parts[0]) > Integer.parseInt(parts[1])) {
+                return new Result(false, getString(R.string.invalid_period_order), getString(R.string.Error_in_settings));
+            }
+        } catch (Exception e){
+            return new Result(false, getString(R.string.unexpected_error) + e.getMessage(), getString(R.string.Error_in_settings));
+        }
+        return null;
     }
 
 }

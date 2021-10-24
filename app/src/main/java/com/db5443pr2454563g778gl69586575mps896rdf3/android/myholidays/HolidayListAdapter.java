@@ -1,5 +1,6 @@
 package com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays;
 
+
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
@@ -110,7 +111,7 @@ public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.
                     holder.mTimeUnit.setVisibility(View.INVISIBLE);
                     holder.mVacationOver.setVisibility(View.VISIBLE);
                     holder.mVacationOver.setText(R.string.HolidayOngoing);
-                    holder.mVacationOver.setTextColor(Color.GREEN);
+                    holder.mVacationOver.setTextColor(Color.rgb(50,205,50)); //Lime Green
                     break;
                 default: //unknown
                     break;

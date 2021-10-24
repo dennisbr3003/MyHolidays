@@ -95,7 +95,7 @@ public class Vacation implements IVacation {
         DateFormat df = new SimpleDateFormat(pattern);
 
         for(Region r:regions){
-            if(r.getRegion().toLowerCase().equals(region.toLowerCase())||r.getRegion().equals(NETHERLANDS)){
+            if(r.getRegion().equalsIgnoreCase(region)||r.getRegion().equals(NETHERLANDS)){
                 enddate = r.getEnddate();
                 Log.d("DENNIS_B", "enddate "+ enddate);
                 TemporalAccessor accessor = timeFormatter.parse(enddate);
