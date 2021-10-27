@@ -118,7 +118,8 @@ public class SettingsFragment extends Fragment implements ISharedRef {
 
                     Result result = checkSettings(txtStart.getText().toString() + "-" + txtEnd.getText().toString());
                     if (result != null && !result.isResult()){
-                        Message.Error.displayErrorMessage(getContext(), result);
+                        // This method returns an AlertDialog so you can access methods directly after the method call
+                        Message.ErrorDialog.getErrorMessageDialog(getContext(), result).show();
                         return;
                     }
 

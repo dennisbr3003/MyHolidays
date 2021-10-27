@@ -9,25 +9,23 @@ import androidx.appcompat.app.AlertDialog;
 
 public class Message {
 
-    static class Error {
+    static class ErrorDialog {
 
-        public Error() {
+        public ErrorDialog() {
         }
 
-        public static void displayErrorMessage(Context context, Result result){
+        public static AlertDialog getErrorMessageDialog(Context context, Result result){
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setCancelable(false);
+
             LayoutInflater inf = LayoutInflater.from(context);
-            View errorDialogExtraLayout;
+            View DialogExtraLayout = inf.inflate(R.layout.error_dialog, null);
 
-            TextView tvMessage;
-            TextView tvCaption;
+            TextView tvMessage = DialogExtraLayout.findViewById(R.id.txtViewErrorMessage);
+            TextView tvCaption = DialogExtraLayout.findViewById(R.id.txtViewErrorHeader);
 
-            errorDialogExtraLayout = inf.inflate(R.layout.cloud_sync_error, null);
-            tvMessage = errorDialogExtraLayout.findViewById(R.id.txtViewErrorMessage);
-            tvCaption = errorDialogExtraLayout.findViewById(R.id.txtViewErrorHeader);
-
-            builder.setView(errorDialogExtraLayout);
+            builder.setView(DialogExtraLayout);
 
             tvMessage.setText(result.getMessage());
             tvCaption.setText(result.getCaption());
@@ -37,7 +35,34 @@ public class Message {
             dlg.setCancelable(false);
             dlg.setCanceledOnTouchOutside(true);
 
-            dlg.show();
+            return dlg;
+        }
+
+    }
+
+    static class ProgressDialog {
+
+        public ProgressDialog() {
+        }
+
+        public static AlertDialog getProgressDialog(Context context, Result result){
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setCancelable(false);
+
+            LayoutInflater inf = LayoutInflater.from(context);
+            View DialogExtraLayout = inf.inflate(R.layout.sync_dialog_animated, null);
+
+            TextView tvCaption = DialogExtraLayout.findViewById(R.id.txtViewProgressHeader);
+
+            builder.setView(DialogExtraLayout);
+            tvCaption.setText(result.getCaption());
+
+            AlertDialog dlg = builder.create();
+
+            dlg.setCanceledOnTouchOutside(false);
+
+            return dlg;
 
         }
 

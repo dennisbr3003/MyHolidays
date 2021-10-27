@@ -40,4 +40,5 @@
     <string name="txtstart_end">\"txtStart-txtEnd \"</string>
     <string name="activity_event_listener_data">sending data to activityEventListener</string>
     <string name="preferences_save_error">\"error saving preferences \"</string>
+    <string name="signature">\"Has signature key \"</string>
 </resources>

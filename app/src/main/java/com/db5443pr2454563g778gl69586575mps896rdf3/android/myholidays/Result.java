@@ -12,6 +12,18 @@ public class Result {
         this.caption = caption;
     }
 
+    public Result(String message, String caption) {
+        this.result = false;
+        this.message = message;
+        this.caption = caption;
+    }
+
+    public Result(String caption) {
+        this.result = false;
+        this.message = "";
+        this.caption = caption;
+    }
+
     public boolean isResult() {
         return result;
     }
