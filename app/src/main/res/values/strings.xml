@@ -41,4 +41,10 @@
     <string name="activity_event_listener_data">sending data to activityEventListener</string>
     <string name="preferences_save_error">\"error saving preferences \"</string>
     <string name="signature">\"Has signature key \"</string>
+    <string name="dismiss_dialog">Dismiss progress dialog (after populating recycler view)</string>
+    <string name="start_settings">start settings</string>
+    <string name="reclyclerview_row_error">\"error trying to fill recycler view row \"</string>
+    <string name="recyclerview_rows">\"Number of recyclerview rows \"</string>
+    <string name="get_canonical">\"data.getCanonical() \"</string>
+    <string name="vacation_tostring">\"vacation.toString() \"</string>
 </resources>

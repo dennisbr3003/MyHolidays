@@ -1,6 +1,7 @@
 package com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays.data_object.ContentRoot;
@@ -11,6 +12,8 @@ import com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays.databindin
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 
@@ -29,6 +32,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.Observable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity implements HolidayListAdapter.ItemClickListener, IWebEventListener, IActivityEventListener {
 
@@ -54,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements HolidayListAdapte
         webServiceClient.setWebEventListener(this);
 
         /* get the data */
-        Log.d("DENNIS_B", "HolidayApp.getInstance().isContentRootAlive() " + HolidayApp.getInstance().isContentRootAlive());
+        Log.d(getString(R.string.tag), "HolidayApp.getInstance().isContentRootAlive() " + HolidayApp.getInstance().isContentRootAlive());
         if(!HolidayApp.getInstance().isContentRootAlive()) {
             webServiceClient.downloadUserDataPayload(this);
         }
@@ -87,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements HolidayListAdapte
     }
 
     public void showSettings(){
-        Log.d("DENNIS_B", "start settings");
+        Log.d(getString(R.string.tag), getString(R.string.start_settings));
         try {
             FragmentManager fm = getSupportFragmentManager();
             Fragment fragment = fm.findFragmentById(R.id.SecondFragment);
@@ -95,12 +102,12 @@ public class MainActivity extends AppCompatActivity implements HolidayListAdapte
             if(fragment == null) {
                 fragment = new SettingsFragment();
                 transaction.add(R.id.fragment_container_view, fragment);
-                transaction.addToBackStack("DENNIS_B");
+                transaction.addToBackStack(getString(R.string.tag));
                 transaction.commit();
             }
             ((SettingsFragment) fragment).setActivityEventListener(this);
         }catch(Exception e){
-            Log.d("DENNIS_B", e.getMessage());
+            Log.d(getString(R.string.tag), e.getMessage());
         }
     }
 
@@ -117,30 +124,37 @@ public class MainActivity extends AppCompatActivity implements HolidayListAdapte
     }
 
     @Override
-    public void loadDownLoadedUserData(ContentRoot holidayMain, AlertDialog dlg) {
+    public void loadDownLoadedUserData(ContentRoot holidayMain, final AlertDialog dlg) {
 
         // data to populate the RecyclerView with
-        Log.d("DENNIS_B", "holidayMain.getType().trim() " + holidayMain.getType().trim());
+        Log.d("DENNIS_B", "HolidayApp.getInstance().isContentRootAlive() " + holidayMain.getType().trim());
 
         Context context_local = this;
 
         HolidayApp.getInstance().setContentRoot(holidayMain);
+        try {
+            this.runOnUiThread(() -> {
 
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+                // AsyncTask is deprecated. You can catch the completion event of this runnable by using a handler
+                Handler handler = new Handler(Looper.getMainLooper());
+
                 RecyclerView recyclerView = findViewById(R.id.holiday_list);
                 recyclerView.setLayoutManager(new LinearLayoutManager(context_local));
                 adapter = new HolidayListAdapter(context_local, holidayMain);
                 recyclerView.addItemDecoration(new DividerItemDecoration(context_local, DividerItemDecoration.VERTICAL));
-                adapter.setClickListener((MainActivity)context_local);
+                adapter.setClickListener((MainActivity) context_local);
                 recyclerView.setAdapter(adapter);
 
-            }
-        });
+                handler.post(() -> {
+                    if (dlg != null) {
+                        Log.d(getString(R.string.tag), getString(R.string.dismiss_dialog));
+                        dlg.dismiss();
+                    }
+                });
 
-        if (dlg != null) {
-            dlg.dismiss();
+            });
+        }catch(Exception e) {
+            Log.d("DENNIS_B", "Error loading recycler view " + e.getMessage());
         }
     }
 

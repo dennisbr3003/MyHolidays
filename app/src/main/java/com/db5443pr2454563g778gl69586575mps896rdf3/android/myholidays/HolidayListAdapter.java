@@ -32,11 +32,7 @@ public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.
     HolidayListAdapter(Context context, ContentRoot data) {
 
         this.mInflater = LayoutInflater.from(context);
-
-        Log.d("DENNIS_B", "data.getCanonical() " + data.getCanonical());
-
         this.mData = data;
-
         schoolyear = rf.getSharedRefSchoolYear(context);
         region = rf.getSharedRef(context, SHAREDREF_REGION);
 
@@ -56,8 +52,6 @@ public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
         try {
             Vacation vacation = mData.get(position, schoolyear);
-
-            Log.d("DENNIS_B", "vacation.toString() " + vacation.toString());
 
             holder.mHolidayTitle.setText(vacation.getType());
             holder.mStartDate.setText(vacation.getStartDate(region));
@@ -117,14 +111,13 @@ public class HolidayListAdapter extends RecyclerView.Adapter<HolidayListAdapter.
                     break;
             }
         } catch(Exception e){
-            Log.d("DENNIS_B", "error trying to fill recycler view row " + e.getMessage());
+            Log.d("DENNIS_B", "error trying to fill recycler view row" + e.getMessage());
         }
     }
 
     // total number of rows
     @Override
     public int getItemCount() {
-        Log.d("DENNIS_B", "Number of recyclerview rows " + mData.getSize(schoolyear));
         return mData.getSize(schoolyear);
     }
 

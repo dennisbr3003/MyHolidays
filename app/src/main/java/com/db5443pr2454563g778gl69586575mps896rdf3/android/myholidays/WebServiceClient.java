@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -59,13 +60,13 @@ public class WebServiceClient implements IWebService,ISharedRef{
 
                 OkHttpClient client = new OkHttpClient().newBuilder().build();
 
-                Log.d("DENNIS_B", "okhttp3 url: " + createUrlFromSettings());
-
                 // okHttp3 does not support a body for GET, using the device_id as a path variable -->
                 Request request = new Request.Builder()
-                        .url(createUrlFromSettings())
+                        .url(getUrlObject())
                         .method("GET", null)
                         .build();
+
+                Log.d("DENNIS_B", "okhttp3 url (by object): " + request.url().toString());
 
                 try {
                     Thread.sleep(1000); // fake slow download so the dialog will show
@@ -97,7 +98,7 @@ public class WebServiceClient implements IWebService,ISharedRef{
                             }
                             JSONObject j_object = new JSONObject(JsonResponse);
 
-                            Log.d("DENNIS_B",context.getString(R.string.signature) + j_object.has(SIGNATURE_KEY));
+                            Log.d("DENNIS_B","Has signature key " + j_object.has(SIGNATURE_KEY));
 
                             if (j_object.has(SIGNATURE_KEY)) {
 
@@ -151,16 +152,18 @@ public class WebServiceClient implements IWebService,ISharedRef{
         });
     }
 
-    private String createUrlFromSettings(){
+    private HttpUrl getUrlObject(){
 
-        String url;
+         return new HttpUrl.Builder()
+                .scheme(URL_SCHEME)
+                .host(URL_HOST)
+                .addPathSegments(URL_BASE) // this method does not replace slashes
+                .addPathSegment(URL_HOLIDAY)
+                .addPathSegment(URL_YEAR)
+                .addPathSegments(rf.getSharedRefSchoolYear(context))
+                .addQueryParameter(QP_NAME_1, QP_VALUE_1)
+                .build();
 
-        if(rf.getSharedRef(context, SHAREDREF_PERIOD).equals("1")){
-            url = String.format("%s?%s", BASE_URL, PROC_OUTPUT);
-        } else {
-            url = String.format("%s/%s/%s?%s", BASE_URL, INTEGRATION, rf.getSharedRefSchoolYear(context), PROC_OUTPUT);
-        }
-        return url;
     }
 
 }

@@ -10,4 +10,7 @@ public interface IVacation {
     String SMILEY_HAPPY = "happy";
     String SMILEY_UNKNOWN = "unknown";
     String NETHERLANDS = "heel Nederland";
+    String HOUR = "H";
+    String MINUTE = "M";
+    String DAY = "D";
 }

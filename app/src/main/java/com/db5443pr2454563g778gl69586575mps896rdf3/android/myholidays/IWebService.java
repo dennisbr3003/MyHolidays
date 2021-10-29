@@ -2,18 +2,16 @@ package com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays;
 
 public interface IWebService {
 
-    String BASE_URL = "https://opendata.rijksoverheid.nl/v1/sources/rijksoverheid/infotypes/schoolholidays";
-    String INTEGRATION = "schoolyear";
     String JSON_UTF8 = "application/json; charset=utf-8";
-    String PROC_OUTPUT = "output=json";
     String SIGNATURE_FIELD = "type";
     String SIGNATURE_KEY = "type";
 
-    enum SyncDirection{
-        UP, DOWN
-    }
+    String URL_SCHEME = "https";
+    String URL_HOST = "opendata.rijksoverheid.nl";
+    String URL_BASE = "v1/sources/rijksoverheid/infotypes";
+    String URL_HOLIDAY = "schoolholidays";
+    String URL_YEAR = "schoolyear";
+    String QP_NAME_1 = "output";
+    String QP_VALUE_1 = "json";
 
-    enum DialogType{
-         SYNCHRONIZATION
-    }
 }
