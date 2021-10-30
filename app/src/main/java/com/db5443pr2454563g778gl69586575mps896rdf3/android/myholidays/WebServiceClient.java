@@ -5,17 +5,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
-
 import androidx.appcompat.app.AlertDialog;
 
 import com.db5443pr2454563g778gl69586575mps896rdf3.android.myholidays.data_object.ContentRoot;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,7 +39,6 @@ public class WebServiceClient implements IWebService,ISharedRef{
     public void setWebEventListener(IWebEventListener webEventListener) {
         this.webEventListener = webEventListener;
     }
-
 
     @SuppressLint("StaticFieldLeak")
     public void downloadUserDataPayload(final Context context){
