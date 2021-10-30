@@ -53,7 +53,8 @@ public class WebServiceClient implements IWebService,ISharedRef{
         // deze moet met message, we hebben de dlg nog nodig dus geen direct show()
         final AlertDialog dlg = Message.ProgressDialog.getProgressDialog(context, new Result(context.getString(R.string.DownloadingUserData)));
         dlg.show();
-
+        Log.d("DENNIS_B", "Progress dialog should now be visible (before the API call)");
+        // lambda
         AsyncTask.execute(() -> {
             OkHttpClient client = new OkHttpClient().newBuilder().build();
 
@@ -138,6 +139,7 @@ public class WebServiceClient implements IWebService,ISharedRef{
     }
 
     private void showSyncErrorDialog(final String message){
+        // lambda
         mHandler.post(() -> Message.ErrorDialog.getErrorMessageDialog(context, new Result(message)).show());
     }
 
